@@ -1,9 +1,6 @@
 package com.pgv.restaurante.model;
 
 import jakarta.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.util.Set;
 
 @Entity
@@ -18,28 +15,31 @@ public class Plato {
     private String descripcion;
     private Double precio;
 
-    // Relación muchos a muchos con Ingrediente
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+    // Relación con Ingredientes (opcional, si ya existe)
+    @ManyToMany
     @JoinTable(
         name = "plato_ingrediente",
         joinColumns = @JoinColumn(name = "plato_id"),
         inverseJoinColumns = @JoinColumn(name = "ingrediente_id")
     )
-    //@JsonManagedReference
     private Set<Ingrediente> ingredientes;
 
-    // Constructores
+    // Un Plato es hecho por un Cocinero
+    @ManyToOne
+    @JoinColumn(name = "cocinero_id")
+    private Cocinero cocinero;
 
+    // Constructores
     public Plato() {}
 
-    public Plato(String nombre, String descripcion, Double precio) {
+    public Plato(String nombre, String descripcion, Double precio, Cocinero cocinero) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
+        this.cocinero = cocinero;
     }
 
     // Getters y Setters
-
     public Long getId() {
         return id;
     }
@@ -74,5 +74,13 @@ public class Plato {
 
     public void setIngredientes(Set<Ingrediente> ingredientes) {
         this.ingredientes = ingredientes;
+    }
+
+    public Cocinero getCocinero() {
+        return cocinero;
+    }
+
+    public void setCocinero(Cocinero cocinero) {
+        this.cocinero = cocinero;
     }
 }

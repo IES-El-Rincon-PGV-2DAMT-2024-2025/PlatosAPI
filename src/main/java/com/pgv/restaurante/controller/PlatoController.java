@@ -1,14 +1,11 @@
 package com.pgv.restaurante.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import com.pgv.restaurante.ResourceNotFoundException;
-import com.pgv.restaurante.model.Ingrediente;
-import com.pgv.restaurante.model.Plato;
-import com.pgv.restaurante.repository.IngredienteRepository;
-import com.pgv.restaurante.repository.PlatoRepository;
+import com.pgv.restaurante.model.*;
+import com.pgv.restaurante.repository.*;
 
 import java.util.List;
 import java.util.Set;
@@ -18,29 +15,33 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/platos")
 public class PlatoController {
-
     @Autowired
     private IngredienteRepository ingredienteRepository;
 
     @Autowired
     private PlatoRepository platoRepository;
 
+    @Autowired
+    private final CocineroRepository cocineroRepository;
+
+    public PlatoController(PlatoRepository platoRepository, CocineroRepository cocineroRepository) {
+        this.platoRepository = platoRepository;
+        this.cocineroRepository = cocineroRepository;
+    }
+
     @GetMapping
     public List<Plato> obtenerTodosLosPlatos() {
         return platoRepository.findAll();
     }
 
-    @PostMapping()
+    @PostMapping
     public Plato crearPlato(@RequestBody Plato plato) {
-        // Asegúrate de que los ingredientes existen antes de asociarlos
-        Set<Ingrediente> ingredientes = plato.getIngredientes();
-        if (ingredientes != null) {
-            ingredientes = ingredientes.stream()
-                    .map(ingrediente -> ingredienteRepository.findById(ingrediente.getId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Ingrediente no encontrado")))
-                    .collect(Collectors.toSet());
-            plato.setIngredientes(ingredientes);
-        }
+        // Asegúrate de que el cocinero exista
+        Long cocineroId = plato.getCocinero().getId();
+        Cocinero cocinero = cocineroRepository.findById(cocineroId)
+                .orElseThrow(() -> new RuntimeException("Cocinero no encontrado"));
+
+        plato.setCocinero(cocinero);
         return platoRepository.save(plato);
     }
 
