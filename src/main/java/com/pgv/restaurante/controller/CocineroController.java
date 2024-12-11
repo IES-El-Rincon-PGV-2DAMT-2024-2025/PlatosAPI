@@ -1,8 +1,8 @@
 package com.pgv.restaurante.controller;
 
 import com.pgv.restaurante.model.Cocinero;
-import com.pgv.restaurante.repository.CocineroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.Optional;
 public class CocineroController {
 
     @Autowired
-    private CocineroRepository cocineroRepository;
+    private JpaRepository<Cocinero, Long> cocineroRepository;
 
     @GetMapping
     public List<Cocinero> getAllCocineros() {

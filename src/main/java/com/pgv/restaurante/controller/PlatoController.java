@@ -1,11 +1,11 @@
 package com.pgv.restaurante.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.*;
 
-import com.pgv.restaurante.ResourceNotFoundException;
 import com.pgv.restaurante.model.*;
-import com.pgv.restaurante.repository.*;
+
 
 import java.util.List;
 import java.util.Set;
@@ -16,15 +16,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/platos")
 public class PlatoController {
     @Autowired
-    private IngredienteRepository ingredienteRepository;
+    private JpaRepository<Ingrediente,Long> ingredienteRepository;
 
     @Autowired
-    private PlatoRepository platoRepository;
+    private JpaRepository<Plato,Long> platoRepository;
 
     @Autowired
-    private final CocineroRepository cocineroRepository;
+    private final JpaRepository<Cocinero,Long> cocineroRepository;
 
-    public PlatoController(PlatoRepository platoRepository, CocineroRepository cocineroRepository) {
+    public PlatoController(JpaRepository<Plato,Long> platoRepository, JpaRepository<Cocinero,Long> cocineroRepository) {
         this.platoRepository = platoRepository;
         this.cocineroRepository = cocineroRepository;
     }
@@ -48,13 +48,13 @@ public class PlatoController {
     @GetMapping("/{id}")
     public Plato obtenerPlatoPorId(@PathVariable("id") Long id) {
         return platoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Plato no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Plato no encontrado"));
     }
 
     @PutMapping("/{id}")
     public Plato actualizarPlato(@PathVariable("id") Long id, @RequestBody Plato detallesPlato) {
         Plato plato = platoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Plato no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Plato no encontrado"));
     
         plato.setNombre(detallesPlato.getNombre());
         plato.setDescripcion(detallesPlato.getDescripcion());
@@ -64,7 +64,7 @@ public class PlatoController {
         if (ingredientes != null) {
             ingredientes = ingredientes.stream()
                     .map(ingrediente -> ingredienteRepository.findById(ingrediente.getId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Ingrediente no encontrado")))
+                            .orElseThrow(() -> new RuntimeException("Ingrediente no encontrado")))
                     .collect(Collectors.toSet());
             plato.setIngredientes(ingredientes);
         }
@@ -75,7 +75,7 @@ public class PlatoController {
     @DeleteMapping("/{id}")
     public Plato eliminarPlato(@PathVariable("id") Long id) {
         Plato plato = platoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Plato no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Plato no encontrado"));
         platoRepository.deleteById(id);
         return plato;
     }

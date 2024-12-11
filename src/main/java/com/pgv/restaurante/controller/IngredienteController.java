@@ -1,11 +1,9 @@
 package com.pgv.restaurante.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.*;
 import com.pgv.restaurante.model.Ingrediente;
-import com.pgv.restaurante.model.Plato;
-import com.pgv.restaurante.repository.IngredienteRepository;
-import com.pgv.restaurante.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -15,7 +13,7 @@ import java.util.List;
 public class IngredienteController {
 
     @Autowired
-    private IngredienteRepository ingredienteRepository;
+    private JpaRepository<Ingrediente, Long> ingredienteRepository;
 
     @GetMapping
     public List<Ingrediente> obtenerTodosLosIngredientes() {
@@ -30,13 +28,13 @@ public class IngredienteController {
     @GetMapping("/{id}")
     public Ingrediente obtenerIngredientePorId(@PathVariable("id") Long id) {
         return ingredienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Ingrediente no encontrado"));
     }
 
     @PutMapping("/{id}")
     public Ingrediente actualizarIngrediente(@PathVariable("id") Long id, @RequestBody Ingrediente detallesIngrediente) {
         Ingrediente ingrediente = ingredienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Ingrediente no encontrado"));
 
         ingrediente.setNombre(detallesIngrediente.getNombre());
 
@@ -46,7 +44,7 @@ public class IngredienteController {
     @DeleteMapping("/{id}")
     public Ingrediente eliminarIngrediente(@PathVariable("id") Long id) {
          Ingrediente ingrediente = ingredienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Ingrediente no encontrado"));
         
         ingredienteRepository.deleteById(id);
         return ingrediente;
