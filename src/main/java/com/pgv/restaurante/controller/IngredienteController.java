@@ -36,9 +36,8 @@ public class IngredienteController {
         Ingrediente ingrediente = ingredienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ingrediente no encontrado"));
 
-        ingrediente.setNombre(detallesIngrediente.getNombre());
-
-        return ingredienteRepository.save(ingrediente);
+        
+        return ingredienteRepository.save(new Ingrediente(ingrediente.nombre()));
     }
 
     @DeleteMapping("/{id}")

@@ -37,8 +37,7 @@ public class CocineroController {
         Cocinero cocinero = cocineroRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cocinero no encontrado"));
 
-        cocinero.setNombre(cocineroDetails.getNombre());
-        return cocineroRepository.save(cocinero);
+        return cocineroRepository.save(new Cocinero(id, cocineroDetails.nombre(), cocinero.platos()));
     }
 
     @DeleteMapping("/{id}")

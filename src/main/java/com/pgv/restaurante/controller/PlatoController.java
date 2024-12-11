@@ -37,12 +37,11 @@ public class PlatoController {
     @PostMapping
     public Plato crearPlato(@RequestBody Plato plato) {
         // Asegúrate de que el cocinero exista
-        Long cocineroId = plato.getCocinero().getId();
+        Long cocineroId = plato.cocinero().id();
         Cocinero cocinero = cocineroRepository.findById(cocineroId)
                 .orElseThrow(() -> new RuntimeException("Cocinero no encontrado"));
 
-        plato.setCocinero(cocinero);
-        return platoRepository.save(plato);
+        return platoRepository.save(new Plato(plato.nombre(), plato.descripcion(), plato.precio(), plato.ingredientes(), cocinero));
     }
 
     @GetMapping("/{id}")
@@ -53,23 +52,18 @@ public class PlatoController {
 
     @PutMapping("/{id}")
     public Plato actualizarPlato(@PathVariable("id") Long id, @RequestBody Plato detallesPlato) {
-        Plato plato = platoRepository.findById(id)
+        platoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plato no encontrado"));
     
-        plato.setNombre(detallesPlato.getNombre());
-        plato.setDescripcion(detallesPlato.getDescripcion());
-        plato.setPrecio(detallesPlato.getPrecio());
-    
-        Set<Ingrediente> ingredientes = detallesPlato.getIngredientes();
+        Set<Ingrediente> ingredientes = detallesPlato.ingredientes();
         if (ingredientes != null) {
             ingredientes = ingredientes.stream()
-                    .map(ingrediente -> ingredienteRepository.findById(ingrediente.getId())
+                    .map(ingrediente -> ingredienteRepository.findById(ingrediente.id())
                             .orElseThrow(() -> new RuntimeException("Ingrediente no encontrado")))
                     .collect(Collectors.toSet());
-            plato.setIngredientes(ingredientes);
         }
-    
-        return platoRepository.save(plato);
+        
+        return platoRepository.save(new Plato(null, detallesPlato.nombre(), detallesPlato.descripcion(), detallesPlato.precio(), ingredientes, detallesPlato.cocinero()));
     }
     
     @DeleteMapping("/{id}")
