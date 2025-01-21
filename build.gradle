@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.0'
+    id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.6'
 }
 
@@ -33,4 +33,7 @@ dependencies {
 
     // Dependencia explícita de javax.persistence (opcional si ya está incluida)
     implementation 'javax.persistence:javax.persistence-api:2.2'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
 }

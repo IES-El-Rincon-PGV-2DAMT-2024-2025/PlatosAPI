@@ -3,7 +3,6 @@ package com.pgv.restaurante.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.pgv.restaurante.model.Ingrediente;
-import com.pgv.restaurante.model.Plato;
 import com.pgv.restaurante.repository.IngredienteRepository;
 import com.pgv.restaurante.ResourceNotFoundException;
 
